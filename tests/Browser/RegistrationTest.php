@@ -16,10 +16,20 @@ class RegistrationTest extends DuskTestCase
             $browser->visit('/register')
                     ->type('name', 'Zahin')
                     ->type('email', 'zahin@example.com')
-                    ->type('password', '12345678');
+                    ->type('password', '12345678')
+                    ->type('password_confirmation', '12345678')
+                    ->press('button[type="submit"]')
+                    ->assertPathIs('/dashboard')
+                    ->assertSee('Dashboard')
+                    ->clickAtXPath('//div[text() = "Zahin"]')
+                    ->clickAtXPath('//a[contains(text(), "Log Out")]')
+                    ->assertPathIs('/');
 
-            $password = $browser->value('input[name="password"]');
-            $browser->type('password_confirmation', $password)
+
+            // Attempt to log in
+            $browser->visit('/login')
+                    ->type('email', 'zahin@example.com')
+                    ->type('password', '12345678')
                     ->press('button[type="submit"]')
                     ->assertPathIs('/dashboard')
                     ->assertSee('Dashboard');
