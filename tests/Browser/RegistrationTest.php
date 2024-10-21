@@ -51,10 +51,29 @@ class RegistrationTest extends DuskTestCase
             $browser->visit('/profile')
                     ->assertSee('Delete Account')
                     ->press('@delete-account-button')
+                    ->press('@confirm-delete-account')
+                    ->assertSee('The password field is required.')
+                    ->type('#password', 'wrongpassword')
+                    ->press('@confirm-delete-account')
+                    ->assertSee('The password is incorrect.')
                     ->type('#password', '12345678')
                     ->press('@confirm-delete-account')
                     ->assertPathIs('/');
             sleep(3);
+        });
+    }
+
+    /**
+    * Test to ensure the user cannot login with a deleted account.
+    */
+    public function testDeletedAccountCannotLogin(): void
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/login')
+                    ->type('email', 'zahin@example.com')
+                    ->type('password', '12345678')
+                    ->press('button[type="submit"]')
+                    ->assertSee('These credentials do not match our records.');
         });
     }
 }
